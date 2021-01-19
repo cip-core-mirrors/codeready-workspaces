@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+echo "--> Generating certificate"
+
+/usr/share/container-scripts/httpd/pre-init/40-ssl-certs.sh
+
+WORKDIR=$(pwd)
+cd /tmp/src
+
+if [ ! -d "source-build/devfiles" ] || [ ! -d "source-build/images" ] || [ ! -d "source-build/resources" ]; then
+
+    echo "You repo must contains devfiles, images and ressources folder in source build folder"
+    exit 1
+fi
+
+echo  "--> Moving image devfiles and ressources to https directory"
+
+mv source-build/devfiles /var/www/html/
+mv source-build/images /var/www/html/
+mv source-build/resources /var/www/html/
+mv .htaccess README.md /var/www/html/
+
+echo "--> Give right to update html folder"
+chown -R 1001:0 /var/www/html/
+chmod -R ug+rwx /var/www/html/

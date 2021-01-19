@@ -9,7 +9,7 @@
 #
 set -x
 
-microdnf install -y findutils bash wget yum git gzip tar jq python3-six python3-pip skopeo && microdnf -y clean all
+yum install -y findutils bash wget yum git gzip tar jq python3-six python3-pip skopeo && yum -y clean all
 # install yq (depends on jq and pyyaml - if jq and pyyaml not already installed, this will try to compile it)
 if [[ -f /tmp/root-local.tgz ]] || [[ ${BOOTSTRAP} == "true" ]]; then
     mkdir -p /root/.local

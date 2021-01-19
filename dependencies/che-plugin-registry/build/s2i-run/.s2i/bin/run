@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+echo "--> Running http server"
+
+exec /usr/local/bin/entrypoint.sh /usr/local/bin/rhel.entrypoint.sh

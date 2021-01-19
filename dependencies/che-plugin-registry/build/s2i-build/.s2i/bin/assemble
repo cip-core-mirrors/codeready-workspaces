@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+WORKDIR=$(pwd)
+cd /tmp/src
+
+if [ ! -d "v3/images" ] || [ ! -d "v3/plugins" ]; then
+
+    echo "You repo must contains v3/images and v3/plugins folder"
+    exit 0
+fi
+
+/build/generate_latest_metas.sh v3
+/build/check_plugins_location.sh v3
+/build/set_plugin_dates.sh v3
+/build/check_metas_schema.sh v3
+/build/swap_images.sh v3
+
+if [[ ${USE_DIGESTS} == "true" ]]; then 
+    /build/write_image_digests.sh v3 
+fi
+
+/build/index.sh v3 > v3/plugins/index.json
+/build/list_referenced_images.sh v3 > v3/external_images.txt
+
+/build/cache_artifacts.sh v3
+
+echo "--> Move plugin ressources to $WORKDIR"
+
+mv v3 $WORKDIR/
+mv .htaccess README.md $WORKDIR

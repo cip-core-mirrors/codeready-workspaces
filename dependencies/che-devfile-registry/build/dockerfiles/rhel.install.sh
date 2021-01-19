@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2018-2021 Red Hat, Inc.
+# Copyright (c) 2018-2020 Red Hat, Inc.
 # This program and the accompanying materials are made
 # available under the terms of the Eclipse Public License 2.0
 # which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -9,7 +9,8 @@
 #
 set -x
 
-microdnf install -y findutils bash wget yum git gzip tar jq python3-six python3-pip skopeo && microdnf -y clean all
+yum install -y findutils bash wget yum gzip tar python3-six python3-pip && yum -y clean all
+yum install -y skopeo jq && yum update -y skopeo containers-common jq oniguruma && yum -y clean all
 # install yq (depends on jq and pyyaml - if jq and pyyaml not already installed, this will try to compile it)
 if [[ -f /tmp/root-local.tgz ]] || [[ ${BOOTSTRAP} == "true" ]]; then
     mkdir -p /root/.local

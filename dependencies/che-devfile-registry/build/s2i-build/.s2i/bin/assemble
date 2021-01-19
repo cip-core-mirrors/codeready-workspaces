@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+WORKDIR=$(pwd)
+cd /tmp/src
+
+if [ ! -d "devfiles" ] || [ ! -d "images" ]; then
+
+    echo "You repo must contains devfiles and images folder"
+    exit 0
+fi
+
+TAG=${PATCHED_IMAGES_TAG}
+ORGANIZATION=${PATCHED_IMAGES_ORG}
+REGISTRY=${PATCHED_IMAGES_REG}
+
+/build/update_devfile_patched_image_tags.sh
+/build/check_mandatory_fields.sh devfiles
+
+if [[ ${USE_DIGESTS} == "true" ]]; then 
+    ./write_image_digests.sh devfiles 
+fi
+
+/build/index.sh > devfiles/index.json
+/build/list_referenced_images.sh devfiles > devfiles/external_images.txt
+
+/build/cache_projects.sh devfiles resources
+/build/cache_images.sh devfiles resources
+
+echo "--> Move main ressource to $WORKDIR"
+
+mv devfiles $WORKDIR/
+mv resources $WORKDIR/
+mv images $WORKDIR/
